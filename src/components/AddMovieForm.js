@@ -4,11 +4,8 @@ import { Link } from "react-router-dom";
 
 import axios from "axios";
 
-const EditMovieForm = (props) => {
+const AddMovieForm = (props) => {
   const { push } = useHistory();
-
-  const { setMovies } = props;
-
   const [movie, setMovie] = useState({
     title: "",
     director: "",
@@ -17,52 +14,40 @@ const EditMovieForm = (props) => {
     description: "",
   });
 
-  const { id } = useParams();
-
-  console.log(id);
-
-  useEffect(() => {
-    axios.get(`http://localhost:9000/api/movies/${id}`).then((res) => {
-      setMovie(res.data);
-    });
-  }, [id]);
-
-  const handleChange = (e) => {
-    setMovie({
-      ...movie,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
+  const addMovie = (e) => {
     e.preventDefault();
+    console.log("up");
     axios
-      .put(`http://localhost:9000/api/movies/${id}`, movie)
+      .post("http://localhost:9000/api/movies", movie)
       .then((res) => {
-        setMovie(res.data);
-        push(`/movies/${id}`);
+        console.log(res);
+        props.setMovies(res.data);
+        push("/movies");
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const { title, director, genre, metascore, description } = movie;
+  const handleChange = (e) => {
+    e.preventDefault();
+    setMovie({
+      ...movie,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <div className="col">
       <div className="modal-content">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={addMovie}>
           <div className="modal-header">
-            <h4 className="modal-title">
-              Editing <strong>{movie.title}</strong>
-            </h4>
+            <h4 className="modal-title">Add Movie</h4>
           </div>
           <div className="modal-body">
             <div className="form-group">
               <label>Title</label>
               <input
-                value={title}
                 onChange={handleChange}
                 name="title"
                 type="text"
@@ -72,7 +57,6 @@ const EditMovieForm = (props) => {
             <div className="form-group">
               <label>Director</label>
               <input
-                value={director}
                 onChange={handleChange}
                 name="director"
                 type="text"
@@ -82,7 +66,6 @@ const EditMovieForm = (props) => {
             <div className="form-group">
               <label>Genre</label>
               <input
-                value={genre}
                 onChange={handleChange}
                 name="genre"
                 type="text"
@@ -92,7 +75,6 @@ const EditMovieForm = (props) => {
             <div className="form-group">
               <label>Metascore</label>
               <input
-                value={metascore}
                 onChange={handleChange}
                 name="metascore"
                 type="number"
@@ -102,7 +84,6 @@ const EditMovieForm = (props) => {
             <div className="form-group">
               <label>Description</label>
               <textarea
-                value={description}
                 onChange={handleChange}
                 name="description"
                 className="form-control"
@@ -121,4 +102,4 @@ const EditMovieForm = (props) => {
   );
 };
 
-export default EditMovieForm;
+export default AddMovieForm;
